@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Seerr Search Results</title>
+    <link rel="stylesheet" href="results.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <span class="logo">Seerr Search</span>
+        <h1 id="query-heading"></h1>
+      </div>
+    </header>
+
+    <main id="app">
+      <div id="loading" class="state-panel">
+        <div class="spinner"></div>
+        <p>Searching Seerr…</p>
+      </div>
+
+      <div id="error-panel" class="state-panel" hidden>
+        <p id="error-message"></p>
+        <a id="error-options-link" href="#" hidden>Open Settings</a>
+      </div>
+
+      <div id="empty-panel" class="state-panel" hidden>
+        <p>No matches found in Seerr.</p>
+      </div>
+
+      <div id="results-meta" class="results-meta" hidden></div>
+      <div id="results-grid" class="grid" hidden></div>
+
+      <div class="load-more-wrap">
+        <button id="load-more-btn" hidden>Load more results</button>
+      </div>
+    </main>
+
+    <script type="module" src="results.js"></script>
+  </body>
+</html>

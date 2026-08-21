@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Seerr Selection Search",
+  "version": "1.0.0",
+  "description": "Highlight a movie or TV show title on any page, right-click, and search your self-hosted Seerr instance for it.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["contextMenus", "storage"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": {
+    "service_worker": "background/background.js",
+    "type": "module"
+  },
+  "options_page": "options/options.html",
+  "action": {
+    "default_title": "Seerr Selection Search",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  }
+}

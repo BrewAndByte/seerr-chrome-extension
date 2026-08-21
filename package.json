@@ -1,0 +1,19 @@
+{
+  "name": "seerr-chrome-extension",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Chrome extension to search a self-hosted Seerr instance from highlighted text on any webpage.",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/copy-static.mjs",
+    "watch": "tsc -p tsconfig.json --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.2.7",
+    "typescript": "^5.5.4",
+    "vitest": "^4.1.11"
+  }
+}
