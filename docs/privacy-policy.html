@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seerr Selection Search Privacy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f5f2;
+    --surface: #ffffff;
+    --border: #e4e1d8;
+    --text: #211f1a;
+    --text-dim: #5c584e;
+    --accent: #5147d6;
+    --accent-soft: #edeafc;
+    --code-bg: #efece3;
+    --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17151f;
+      --surface: #1e1c29;
+      --border: #322f42;
+      --text: #ece9f5;
+      --text-dim: #a9a4bd;
+      --accent: #b3a9ff;
+      --accent-soft: #29253d;
+      --code-bg: #26233533;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17151f;
+    --surface: #1e1c29;
+    --border: #322f42;
+    --text: #ece9f5;
+    --text-dim: #a9a4bd;
+    --accent: #b3a9ff;
+    --accent-soft: #29253d;
+    --code-bg: #262335;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 72px 24px 120px;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 20px;
+  }
+  .eyebrow svg { width: 22px; height: 22px; flex: none; }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 5vw, 42px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 10px;
+    text-wrap: balance;
+    color: var(--text);
+  }
+
+  .meta {
+    font-family: var(--font-display);
+    font-size: 14px;
+    color: var(--text-dim);
+    margin: 0 0 48px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    margin: 52px 0 14px;
+    color: var(--text);
+  }
+  section:first-of-type h2 { margin-top: 0; }
+
+  p { margin: 0 0 16px; max-width: 62ch; color: var(--text); }
+  p.dim { color: var(--text-dim); }
+
+  ul { margin: 0 0 16px; padding-left: 1.3em; max-width: 62ch; }
+  li { margin: 0 0 8px; }
+  li::marker { color: var(--accent); }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.87em;
+    background: var(--code-bg);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+  }
+
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 24px 0 32px;
+  }
+  .callout p { margin: 0; color: var(--text); }
+  .callout p + p { margin-top: 10px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-display);
+    font-size: 14.5px;
+    margin: 8px 0 28px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 14px 10px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  td:first-child, th:first-child { color: var(--text); font-weight: 600; white-space: nowrap; padding-right: 20px; }
+
+  .table-scroll { overflow-x: auto; }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="eyebrow">
+    <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+      <line x1="86" y1="86" x2="106" y2="106" stroke="currentColor" stroke-width="15" stroke-linecap="round"/>
+      <circle cx="54" cy="54" r="41" fill="none" stroke="currentColor" stroke-width="9"/>
+    </svg>
+    Seerr Selection Search
+  </div>
+
+  <h1>Privacy Policy</h1>
+  <p class="meta">Last updated August 21, 2026</p>
+
+  <section>
+    <h2>The short version</h2>
+    <div class="callout">
+      <p>This extension does not collect, transmit, or sell any of your data to its developer or to any third party. The only network requests it ever makes are to the one Seerr server address you configure yourself, and only when you actively search.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What the extension stores</h2>
+    <p>Two values you enter on the extension's own Options page:</p>
+    <div class="table-scroll">
+      <table>
+        <tr><th>Value</th><th>Purpose</th><th>Where it lives</th></tr>
+        <tr><td>Seerr URL</td><td>The address of your self-hosted Seerr instance</td><td><code>chrome.storage.local</code> — this device only</td></tr>
+        <tr><td>Seerr API key</td><td>Authenticates search requests to your Seerr instance</td><td><code>chrome.storage.local</code> — this device only</td></tr>
+      </table>
+    </div>
+    <p class="dim">Both are stored in <code>chrome.storage.local</code>, never <code>chrome.storage.sync</code> — they stay on your device and are never attached to your Google account or synced anywhere.</p>
+  </section>
+
+  <section>
+    <h2>What the extension sends, and to whom</h2>
+    <p>When you highlight text and choose <strong>Search Seerr</strong> from the right-click menu, the extension sends that selected text to the single Seerr origin you configured, as a search request. That request also carries your API key, exactly as it would if you typed the search into Seerr's own web page.</p>
+    <p>Nothing is ever sent to the extension's developer, to an analytics service, or to any server other than the Seerr instance you specified. There are no third parties in this data path at all.</p>
+  </section>
+
+  <section>
+    <h2>Page access</h2>
+    <p>The extension does not run scripts on the pages you visit and cannot read their content. It has no content script and no <code>&lt;all_urls&gt;</code> permission. Its only two capabilities are: adding one item to the right-click menu, and — only for the single origin you explicitly grant — talking to your Seerr server when you trigger a search.</p>
+  </section>
+
+  <section>
+    <h2>Your control</h2>
+    <ul>
+      <li>Clearing the URL and API key fields in Options and saving removes them from local storage.</li>
+      <li>Uninstalling the extension removes all locally stored data with it.</li>
+      <li>Revoking the extension's host permission for your Seerr origin (via Chrome's extension settings) stops it from making any network request at all.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Changes to this policy</h2>
+    <p>If this policy changes, the "Last updated" date above will change with it. Material changes will also be reflected in the Chrome Web Store listing.</p>
+  </section>
+
+  <footer>
+    Seerr Selection Search is an independent, unofficial companion extension. It is not made by, affiliated with, or endorsed by the Seerr project.
+  </footer>
+</div>
+</body>
+</html>
