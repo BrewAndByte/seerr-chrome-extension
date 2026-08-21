@@ -1,7 +1,8 @@
 import { getConfig } from "../lib/config.js";
 import { searchSeerr } from "../lib/seerr-api.js";
-import { MediaStatus, SeerrError, type DisplayResult } from "../lib/types.js";
+import { MediaStatus, SeerrError, type DisplayResult, type SeerrConfig } from "../lib/types.js";
 import { checkQuery, MAX_QUERY_LENGTH } from "../lib/text.js";
+import { openRequestModal } from "./request-modal.js";
 
 const queryHeading = document.getElementById("query-heading") as HTMLHeadingElement;
 const loadingPanel = document.getElementById("loading") as HTMLDivElement;
@@ -12,6 +13,11 @@ const emptyPanel = document.getElementById("empty-panel") as HTMLDivElement;
 const resultsMeta = document.getElementById("results-meta") as HTMLDivElement;
 const resultsGrid = document.getElementById("results-grid") as HTMLDivElement;
 const loadMoreBtn = document.getElementById("load-more-btn") as HTMLButtonElement;
+
+let seerrConfig: SeerrConfig | null = null;
+
+const REQUEST_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5v1.5A2.25 2.25 0 0 0 5.25 20.25h13.5A2.25 2.25 0 0 0 21 18v-1.5" /><path d="M7.5 12 12 16.5 16.5 12" /><path d="M12 3v13.5" /></svg>';
 
 function show(el: HTMLElement, visible: boolean): void {
   el.hidden = !visible;
@@ -90,6 +96,33 @@ function buildCard(result: DisplayResult, query: string): HTMLAnchorElement {
   pill.textContent = text;
   body.appendChild(pill);
 
+  // Seerr only shows its own poster "Request" overlay when nothing has been
+  // requested yet (no status, or UNKNOWN/DELETED) — mirror that here.
+  if (result.status === null) {
+    const overlay = document.createElement("div");
+    overlay.className = "poster-request-overlay";
+
+    const requestBtn = document.createElement("button");
+    requestBtn.type = "button";
+    requestBtn.className = "poster-request-btn";
+    requestBtn.innerHTML = `${REQUEST_ICON}<span>Request</span>`;
+    requestBtn.setAttribute("aria-label", `Request ${result.title}`);
+    requestBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!seerrConfig) return;
+      openRequestModal(seerrConfig, result, (newStatus) => {
+        overlay.remove();
+        const { text: newText, cls: newCls } = statusLabel(newStatus);
+        pill.className = `status-pill ${newCls}`;
+        pill.textContent = newText;
+      });
+    });
+
+    overlay.appendChild(requestBtn);
+    posterWrap.appendChild(overlay);
+  }
+
   card.appendChild(posterWrap);
   card.appendChild(body);
   return card;
@@ -129,6 +162,7 @@ async function main(): Promise<void> {
     showError("Seerr isn't configured yet.", true);
     return;
   }
+  seerrConfig = config;
 
   let page = 1;
   let totalPages = 1;
