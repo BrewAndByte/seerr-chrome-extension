@@ -7,12 +7,16 @@ const MENU_ID = "search-seerr";
 // injected into every page, just to shave the label — not worth the broad
 // host permission it'd require). A static label plus the real selection text
 // read from `info.selectionText` in onClicked is the documented fallback.
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener((details) => {
   chrome.contextMenus.create({
     id: MENU_ID,
     title: "Search Seerr",
     contexts: ["selection"],
   });
+
+  if (details.reason === "install") {
+    chrome.runtime.openOptionsPage();
+  }
 });
 
 chrome.contextMenus.onClicked.addListener((info) => {
