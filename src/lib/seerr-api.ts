@@ -1,8 +1,10 @@
 import type {
   DisplayResult,
+  RequestPayload,
   SeerrConfig,
   SeerrSearchResponse,
   SeerrSearchResult,
+  SeerrSeason,
 } from "./types.js";
 import { SeerrError } from "./types.js";
 
@@ -15,11 +17,15 @@ function withTimeout(ms: number): { signal: AbortSignal; cancel: () => void } {
   return { signal: controller.signal, cancel: () => clearTimeout(timer) };
 }
 
-async function seerrFetch(config: SeerrConfig, path: string): Promise<Response> {
+async function seerrFetch(config: SeerrConfig, path: string, init?: RequestInit): Promise<Response> {
   const { signal, cancel } = withTimeout(REQUEST_TIMEOUT_MS);
   try {
     return await fetch(`${config.seerrUrl}${path}`, {
-      headers: config.apiKey ? { "X-Api-Key": config.apiKey } : {},
+      ...init,
+      headers: {
+        ...(config.apiKey ? { "X-Api-Key": config.apiKey } : {}),
+        ...(init?.headers as Record<string, string> | undefined),
+      },
       signal,
     });
   } catch (err) {
@@ -125,6 +131,55 @@ export async function searchSeerr(
     totalPages: data.totalPages ?? 1,
     totalResults: data.totalResults ?? results.length,
   };
+}
+
+interface SeerrTvDetailsResponse {
+  seasons?: { seasonNumber: number; episodeCount: number; name?: string }[];
+}
+
+/** Fetches the requestable (non-special) season list for a TV show, for the season-picker in the request modal. */
+export async function getTvSeasons(config: SeerrConfig, tmdbId: number): Promise<SeerrSeason[]> {
+  const response = await seerrFetch(config, `/api/v1/tv/${tmdbId}`);
+
+  if (response.status === 401 || response.status === 403) {
+    throw new SeerrError(
+      "unauthorized",
+      "Seerr rejected the API key. Check it in the extension options."
+    );
+  }
+  if (!response.ok) {
+    throw new SeerrError("http_error", `Seerr returned an unexpected error (HTTP ${response.status}).`);
+  }
+
+  let data: SeerrTvDetailsResponse;
+  try {
+    data = (await response.json()) as SeerrTvDetailsResponse;
+  } catch {
+    throw new SeerrError("malformed_response", "Seerr sent back a response this extension couldn't understand.");
+  }
+
+  return (data.seasons ?? [])
+    .filter((s) => s.seasonNumber > 0 && s.episodeCount > 0)
+    .map((s) => ({ seasonNumber: s.seasonNumber, episodeCount: s.episodeCount, name: s.name }));
+}
+
+/** Submits a new media request. Throws SeerrError on rejection (bad key, validation failure, etc). */
+export async function submitRequest(config: SeerrConfig, payload: RequestPayload): Promise<void> {
+  const response = await seerrFetch(config, "/api/v1/request", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (response.status === 401 || response.status === 403) {
+    throw new SeerrError(
+      "unauthorized",
+      "Seerr rejected the API key. Check it in the extension options."
+    );
+  }
+  if (!response.ok) {
+    throw new SeerrError("http_error", `Seerr couldn't process the request (HTTP ${response.status}).`);
+  }
 }
 
 export interface ConnectionTestResult {

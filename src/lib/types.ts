@@ -53,6 +53,20 @@ export interface DisplayResult {
   detailUrl: string;
 }
 
+/** A single season entry from /api/v1/tv/{id}, narrowed to what the request modal needs. */
+export interface SeerrSeason {
+  seasonNumber: number;
+  episodeCount: number;
+  name?: string;
+}
+
+/** Body for POST /api/v1/request. */
+export interface RequestPayload {
+  mediaId: number;
+  mediaType: "movie" | "tv";
+  seasons?: number[];
+}
+
 export type SeerrErrorKind =
   | "not_configured"
   | "invalid_url"
