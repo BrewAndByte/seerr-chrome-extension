@@ -1,21 +1,11 @@
 name: Publish extension to Chrome Web Store
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - "src/**"
-      - "scripts/**"
-      - "package.json"
-      - "package-lock.json"
-      - "tsconfig.json"
-      - ".github/workflows/publish-extension.yml"
+  release:
+    types: [published]
 
 concurrency:
   group: publish-extension
-
-permissions:
-  contents: write
 
 jobs:
   publish:
@@ -23,6 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -65,11 +57,3 @@ jobs:
           REFRESH_TOKEN: ${{ secrets.CHROME_REFRESH_TOKEN }}
           PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
           EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
-
-      - name: Tag the published version
-        run: |
-          version=$(node -p "require('./src/manifest.json').version")
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "v$version"
-          git push origin "v$version"

@@ -210,11 +210,16 @@ above.
   script injected into every page just to keep the label in sync, which
   would require broad host permissions this project deliberately avoids.
   The full selected text is still used as the actual search query.
-- Published on the Chrome Web Store; every push to `master` that touches
-  the extension source builds, packages, and publishes a new version
-  automatically (see `.github/workflows/publish-extension.yml`). This
-  only takes effect if `version` in `src/manifest.json` has been bumped —
-  the Chrome Web Store rejects uploads that don't increase the version.
+- Published on the Chrome Web Store. Releases are driven by
+  [Conventional Commits](https://www.conventionalcommits.org/) via
+  `release-please` (`.github/workflows/release-please.yml`): PR titles
+  (enforced by `.github/workflows/pr-title-lint.yml`) must start with
+  `feat:`, `fix:`, etc., and merging to `master` keeps a "release PR" up
+  to date with the version bump (`src/manifest.json` + `package.json`)
+  and changelog it computes from those commits. Merging that release PR
+  cuts a GitHub Release/tag, which triggers
+  `.github/workflows/publish-extension.yml` to build, package, upload,
+  and publish that version to the Chrome Web Store.
 - Settings are intentionally minimal (URL + API key) but structured so
   additional options (result count, "open top result automatically", etc.)
   can be added to `SeerrConfig` and the Options form without a redesign.
