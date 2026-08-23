@@ -1,5 +1,6 @@
 node_modules/
 dist/
+extension.zip
 test-dist/
 e2e-output/
 *.log
