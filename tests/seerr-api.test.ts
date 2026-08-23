@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { searchSeerr, testConnection } from "../src/lib/seerr-api.js";
+import { getServers, searchSeerr, testConnection } from "../src/lib/seerr-api.js";
 import { MediaStatus, SeerrError } from "../src/lib/types.js";
 
 const config = { seerrUrl: "http://192.168.1.10:5055", apiKey: "test-key" };
@@ -124,6 +124,76 @@ describe("searchSeerr", () => {
       vi.fn().mockRejectedValue(new DOMException("The operation was aborted.", "AbortError"))
     );
     await expect(searchSeerr(config, "x")).rejects.toMatchObject({ kind: "timeout" });
+  });
+});
+
+describe("getServers", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("maps a multi-server response and flags the default", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      fakeResponse(200, [
+        { id: 1, name: "Radarr HD", isDefault: true, is4k: false },
+        { id: 2, name: "Radarr Anime", isDefault: false, is4k: false },
+      ])
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const servers = await getServers(config, "movie");
+
+    expect(servers).toEqual([
+      { id: 1, name: "Radarr HD", isDefault: true },
+      { id: 2, name: "Radarr Anime", isDefault: false },
+    ]);
+    const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain("/api/v1/service/radarr");
+  });
+
+  it("hits the sonarr endpoint for tv", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(fakeResponse(200, []));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await getServers(config, "tv");
+
+    const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain("/api/v1/service/sonarr");
+  });
+
+  it("returns a single-item array unchanged when there's only one server", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(fakeResponse(200, [{ id: 1, name: "Radarr", isDefault: true, is4k: false }]))
+    );
+
+    const servers = await getServers(config, "movie");
+    expect(servers).toEqual([{ id: 1, name: "Radarr", isDefault: true }]);
+  });
+
+  it("filters out 4K servers", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        fakeResponse(200, [
+          { id: 1, name: "Radarr HD", isDefault: true, is4k: false },
+          { id: 2, name: "Radarr 4K", isDefault: false, is4k: true },
+        ])
+      )
+    );
+
+    const servers = await getServers(config, "movie");
+    expect(servers).toEqual([{ id: 1, name: "Radarr HD", isDefault: true }]);
+  });
+
+  it("throws an 'unauthorized' SeerrError on 401", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(fakeResponse(401, {})));
+    await expect(getServers(config, "movie")).rejects.toMatchObject({ kind: "unauthorized" });
+  });
+
+  it("throws 'malformed_response' when the body isn't an array", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(fakeResponse(200, { unexpected: true })));
+    await expect(getServers(config, "movie")).rejects.toMatchObject({ kind: "malformed_response" });
   });
 });
 
