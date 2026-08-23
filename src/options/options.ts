@@ -7,6 +7,9 @@ const form = document.getElementById("config-form") as HTMLFormElement;
 const testBtn = document.getElementById("test-btn") as HTMLButtonElement;
 const saveBtn = document.getElementById("save-btn") as HTMLButtonElement;
 const statusEl = document.getElementById("status-msg") as HTMLParagraphElement;
+const versionEl = document.getElementById("ext-version") as HTMLSpanElement;
+
+versionEl.textContent = chrome.runtime.getManifest().version;
 
 function showStatus(kind: "success" | "error" | "info", message: string): void {
   statusEl.textContent = message;
