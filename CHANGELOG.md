@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/BrewAndByte/seerr-chrome-extension/compare/seerr-chrome-extension-v1.0.3...seerr-chrome-extension-v1.1.0) (2026-08-23)
+
+
+### Features
+
+* show installed version and credit footer on options page ([ff69f16](https://github.com/BrewAndByte/seerr-chrome-extension/commit/ff69f1627d1e02a03a8a1c5de6a801b1ecf53025))
+
 ## [1.0.3](https://github.com/BrewAndByte/seerr-chrome-extension/compare/seerr-chrome-extension-v1.0.2...seerr-chrome-extension-v1.0.3) (2026-08-23)
 
 
