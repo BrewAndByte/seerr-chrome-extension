@@ -210,8 +210,11 @@ above.
   script injected into every page just to keep the label in sync, which
   would require broad host permissions this project deliberately avoids.
   The full selected text is still used as the actual search query.
-- No automated Chrome-Web-Store packaging/publishing step; this is built
-  for local "load unpacked" use.
+- Published on the Chrome Web Store; every push to `master` that touches
+  the extension source builds, packages, and publishes a new version
+  automatically (see `.github/workflows/publish-extension.yml`). This
+  only takes effect if `version` in `src/manifest.json` has been bumped —
+  the Chrome Web Store rejects uploads that don't increase the version.
 - Settings are intentionally minimal (URL + API key) but structured so
   additional options (result count, "open top result automatically", etc.)
   can be added to `SeerrConfig` and the Options form without a redesign.
