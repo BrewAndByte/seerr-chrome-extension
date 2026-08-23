@@ -217,9 +217,12 @@ above.
   `feat:`, `fix:`, etc., and merging to `master` keeps a "release PR" up
   to date with the version bump (`src/manifest.json` + `package.json`)
   and changelog it computes from those commits. Merging that release PR
-  cuts a GitHub Release/tag, which triggers
-  `.github/workflows/publish-extension.yml` to build, package, upload,
-  and publish that version to the Chrome Web Store.
+  cuts a GitHub Release/tag and, in the same workflow run, calls
+  `.github/workflows/publish-extension.yml` (as a reusable workflow) to
+  build, package, upload, and publish that version to the Chrome Web
+  Store — it isn't a separate `on: release` trigger, because GitHub
+  Actions doesn't let a `GITHUB_TOKEN`-authored release event start
+  another workflow.
 - Settings are intentionally minimal (URL + API key) but structured so
   additional options (result count, "open top result automatically", etc.)
   can be added to `SeerrConfig` and the Options form without a redesign.
