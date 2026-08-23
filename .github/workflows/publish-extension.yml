@@ -1,8 +1,12 @@
 name: Publish extension to Chrome Web Store
 
 on:
-  release:
-    types: [published]
+  workflow_call:
+    inputs:
+      tag_name:
+        description: Git ref (tag) to build and publish
+        required: true
+        type: string
 
 concurrency:
   group: publish-extension
@@ -14,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.tag_name }}
+          ref: ${{ inputs.tag_name }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -37,7 +41,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: extension-${{ github.event.release.tag_name }}
+          name: extension-${{ inputs.tag_name }}
           path: extension.zip
 
       - name: Upload to Chrome Web Store
