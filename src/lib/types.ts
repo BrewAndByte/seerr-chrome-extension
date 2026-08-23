@@ -60,11 +60,23 @@ export interface SeerrSeason {
   name?: string;
 }
 
+/**
+ * A configured Radarr/Sonarr server from /api/v1/service/{radarr,sonarr}, narrowed to what the
+ * request modal's server picker needs (the raw response also has is4k, which is filtered out
+ * before this type is used).
+ */
+export interface SeerrServer {
+  id: number;
+  name: string;
+  isDefault: boolean;
+}
+
 /** Body for POST /api/v1/request. */
 export interface RequestPayload {
   mediaId: number;
   mediaType: "movie" | "tv";
   seasons?: number[];
+  serverId?: number;
 }
 
 export type SeerrErrorKind =

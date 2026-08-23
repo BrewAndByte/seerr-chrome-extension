@@ -1,5 +1,12 @@
-import { getTvSeasons, submitRequest } from "../lib/seerr-api.js";
-import { MediaStatus, SeerrError, type DisplayResult, type SeerrConfig, type SeerrSeason } from "../lib/types.js";
+import { getServers, getTvSeasons, submitRequest } from "../lib/seerr-api.js";
+import {
+  MediaStatus,
+  SeerrError,
+  type DisplayResult,
+  type SeerrConfig,
+  type SeerrSeason,
+  type SeerrServer,
+} from "../lib/types.js";
 
 const DOWNLOAD_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5v1.5A2.25 2.25 0 0 0 5.25 20.25h13.5A2.25 2.25 0 0 0 21 18v-1.5" /><path d="M7.5 12 12 16.5 16.5 12" /><path d="M12 3v13.5" /></svg>';
@@ -53,6 +60,13 @@ export function openRequestModal(
 
   const body = document.createElement("div");
   body.className = "modal-body";
+
+  // Reserved up front so the server picker (populated async, once getServers resolves) always
+  // lands in the same spot regardless of how the movie/tv content below finishes loading.
+  const serverField = document.createElement("div");
+  serverField.className = "modal-field";
+  serverField.hidden = true;
+  body.appendChild(serverField);
 
   const errorBox = document.createElement("div");
   errorBox.className = "modal-error";
@@ -108,6 +122,51 @@ export function openRequestModal(
       : `${DOWNLOAD_ICON}<span>Request</span>`;
   }
 
+  // Which server (Radarr/Sonarr instance) to target, if the picker below ends up shown.
+  // Stays undefined when there's nothing to choose from, so the request is sent exactly as
+  // before (no serverId) and Seerr falls back to its own default server.
+  let selectedServerId: number | undefined;
+
+  function renderServerPicker(servers: SeerrServer[]): void {
+    // Seerr itself only shows this picker when there's more than one (non-4K) server to
+    // choose from; with 0 or 1, submit exactly as today.
+    if (servers.length <= 1) return;
+
+    // servers.length > 1 was already checked above, so there's always a first element.
+    const defaultServer = servers.find((s) => s.isDefault) ?? servers[0]!;
+    selectedServerId = defaultServer.id;
+
+    const label = document.createElement("label");
+    label.className = "modal-label";
+    label.textContent = "Destination Server";
+    label.htmlFor = "request-modal-server";
+
+    const select = document.createElement("select");
+    select.id = "request-modal-server";
+    select.className = "modal-select";
+    for (const server of servers) {
+      const option = document.createElement("option");
+      option.value = String(server.id);
+      option.textContent = server.isDefault ? `${server.name} (Default)` : server.name;
+      if (server.id === defaultServer.id) option.selected = true;
+      select.appendChild(option);
+    }
+    select.addEventListener("change", () => {
+      selectedServerId = Number(select.value);
+    });
+
+    serverField.appendChild(label);
+    serverField.appendChild(select);
+    serverField.hidden = false;
+  }
+
+  // Fetch alongside getTvSeasons (for tv) rather than after it, so the picker doesn't add
+  // extra latency before the modal is interactive. Failures here are non-essential -- fall
+  // back silently to "no picker, no serverId", the same as today.
+  getServers(config, result.mediaType)
+    .then(renderServerPicker)
+    .catch(() => {});
+
   async function doSubmit(seasons?: number[]): Promise<void> {
     setSubmitting(true);
     errorBox.hidden = true;
@@ -116,6 +175,7 @@ export function openRequestModal(
         mediaId: result.id,
         mediaType: result.mediaType,
         ...(seasons ? { seasons } : {}),
+        ...(selectedServerId !== undefined ? { serverId: selectedServerId } : {}),
       });
       onRequested(MediaStatus.PENDING);
       close();

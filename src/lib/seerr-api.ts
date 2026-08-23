@@ -5,6 +5,7 @@ import type {
   SeerrSearchResponse,
   SeerrSearchResult,
   SeerrSeason,
+  SeerrServer,
 } from "./types.js";
 import { SeerrError } from "./types.js";
 
@@ -161,6 +162,47 @@ export async function getTvSeasons(config: SeerrConfig, tmdbId: number): Promise
   return (data.seasons ?? [])
     .filter((s) => s.seasonNumber > 0 && s.episodeCount > 0)
     .map((s) => ({ seasonNumber: s.seasonNumber, episodeCount: s.episodeCount, name: s.name }));
+}
+
+interface SeerrServiceServerResponse {
+  id: number;
+  name: string;
+  isDefault: boolean;
+  is4k: boolean;
+}
+
+/**
+ * Fetches the configured Radarr (movie) or Sonarr (tv) servers, for the destination-server
+ * picker in the request modal. 4K servers are filtered out — this extension doesn't do 4K requests.
+ */
+export async function getServers(config: SeerrConfig, mediaType: "movie" | "tv"): Promise<SeerrServer[]> {
+  const service = mediaType === "movie" ? "radarr" : "sonarr";
+  const response = await seerrFetch(config, `/api/v1/service/${service}`);
+
+  if (response.status === 401 || response.status === 403) {
+    throw new SeerrError(
+      "unauthorized",
+      "Seerr rejected the API key. Check it in the extension options."
+    );
+  }
+  if (!response.ok) {
+    throw new SeerrError("http_error", `Seerr returned an unexpected error (HTTP ${response.status}).`);
+  }
+
+  let data: SeerrServiceServerResponse[];
+  try {
+    data = (await response.json()) as SeerrServiceServerResponse[];
+  } catch {
+    throw new SeerrError("malformed_response", "Seerr sent back a response this extension couldn't understand.");
+  }
+
+  if (!Array.isArray(data)) {
+    throw new SeerrError("malformed_response", "Seerr sent back a response this extension couldn't understand.");
+  }
+
+  return data
+    .filter((s) => !s.is4k)
+    .map((s) => ({ id: s.id, name: s.name, isDefault: s.isDefault }));
 }
 
 /** Submits a new media request. Throws SeerrError on rejection (bad key, validation failure, etc). */
