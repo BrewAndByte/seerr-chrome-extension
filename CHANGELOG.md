@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/brewandbytedev/seerr-chrome-extension/compare/seerr-chrome-extension-v1.1.0...seerr-chrome-extension-v1.1.1) (2026-08-26)
+
+
+### Bug Fixes
+
+* update Brew and Byte GitHub link to org URL ([daa549d](https://github.com/brewandbytedev/seerr-chrome-extension/commit/daa549d11eec936534836065709d508143cae044))
+* update Brew and Byte GitHub link to org URL ([80f6712](https://github.com/brewandbytedev/seerr-chrome-extension/commit/80f671220dc775d1da218d86519c58d7974301a7))
+
 ## [1.1.0](https://github.com/BrewAndByte/seerr-chrome-extension/compare/seerr-chrome-extension-v1.0.3...seerr-chrome-extension-v1.1.0) (2026-08-23)
 
 
