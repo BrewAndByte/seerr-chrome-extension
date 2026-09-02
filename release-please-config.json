@@ -4,7 +4,7 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "package-name": "seerr-chrome-extension",
+      "package-name": "seerr-selection-search",
       "extra-files": [
         {
           "type": "json",
