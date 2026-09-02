@@ -1,5 +1,7 @@
 # Seerr Selection Search
 
+[![GitHub release](https://img.shields.io/github/v/release/brewandbytedev/seerr-selection-search?sort=semver)](https://github.com/brewandbytedev/seerr-selection-search/releases/latest)
+
 A Chrome (Manifest V3) extension that lets you highlight a movie or TV show
 title on any webpage, right-click, and search your own self-hosted
 [Seerr](https://github.com/seerr-org/seerr) (or Jellyseerr/Overseerr-compatible)
