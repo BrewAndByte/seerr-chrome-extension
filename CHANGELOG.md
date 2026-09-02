@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.2.0](https://github.com/brewandbytedev/seerr-selection-search/compare/v1.1.1...v1.2.0) (2026-09-02)
+
+
+### Features
+
+* show installed version and credit footer on options page ([d026d9b](https://github.com/brewandbytedev/seerr-selection-search/commit/d026d9b15a7365330511b166daa4ea64f13e9412))
+
+
+### Bug Fixes
+
+* include release tag in the uploaded extension artifact name ([#3](https://github.com/brewandbytedev/seerr-selection-search/issues/3)) ([3ea1524](https://github.com/brewandbytedev/seerr-selection-search/commit/3ea1524ab46cb9dd9d6484da285129c3512e9241))
+* trigger Chrome Web Store publish from the release-please workflow directly ([#5](https://github.com/brewandbytedev/seerr-selection-search/issues/5)) ([3c1de6f](https://github.com/brewandbytedev/seerr-selection-search/commit/3c1de6fd73514b5e6c6aa772e88255c6d8deb57a))
+* update Brew and Byte GitHub link to org URL ([9d9a736](https://github.com/brewandbytedev/seerr-selection-search/commit/9d9a73694868a6147d9a09b078e44550b79a68a5))
+* update Brew and Byte GitHub link to org URL ([a91bb68](https://github.com/brewandbytedev/seerr-selection-search/commit/a91bb68ec52944677454655431c797043e46cf40))
+
 ## [1.1.1](https://github.com/brewandbytedev/seerr-chrome-extension/compare/seerr-chrome-extension-v1.1.0...seerr-chrome-extension-v1.1.1) (2026-08-26)
 
 
